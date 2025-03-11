@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>pomodoro timer</title>
+    <link rel="shortcut icon" href="./assets/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <main>
+        <nav><h1>pomodoro<span>timer</span></h1></nav>
+        
+        <div class="border" aria-hidden="true">
+           <div class="timer">
+               <button class="start-btn" type="button" aria-label="start timer button"></button>
+
+               <div class="time" >25:00</div>
+            
+               <button class="pause-btn" type="button" aria-label="pause timer button"></button>
+            </div>
+        </div>
+
+        <div class="settings">
+            <button type="button" id="task" class="active">task</button>
+            <button type="button" id="short-break">short break</button>
+            <button type="button" id="long-break">long break</button>
+            <button type="button" id="custom">custom</button>
+        </div>
+
+        <div class="backdrop hide" aria-hidden="true"></div>
+        
+        <div class="custom-timer-modal hide">
+            <button type="button" class="close-btn" aria-label="close custom timer modal"></button>
+            <form class="custom-timer-form">
+                <div class="inputs">
+                    <label for="min">
+                        <input type="number" name="min" id="min" placeholder="minutes" aria-label="enter minutes">
+                    </label>
+    
+                    <label for="sec">
+                        <input type="number" name="sec" id="sec" placeholder="seconds" aria-label="enter seconds">
+                    </label>
+                </div>
+            
+                <button type="submit">set timer</button>
+            </form>
+        </div>
+
+        <div class="notification">
+            <p>time's up! ⏰</p>
+            <button type="button" class="close-btn" aria-label="close notification"></button>
+        </div>
+    </main>
+
+    <footer>
+        <p>icons by <a href="https://www.svgrepo.com/" target="_blank">SVGrepo</a></p>
+        <p>favicon by <a href="https://www.freepik.com/" target="_blank">freepik</a></p>
+        <p>notification sound effect by <a href="https://pixabay.com/users/olivia_parker-49036721/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=309545">Olivia Parker</a> from <a href="https://pixabay.com/sound-effects//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=309545">Pixabay</a></p>
+        <p>coded by <a href="https://github.com/tortaruga" target="_blank">tortaruga</a></p>
+    </footer>
+
+    <script type="module" src="./app.js"></script> 
+</body>
+</html>
