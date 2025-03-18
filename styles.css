@@ -1,3 +1,4 @@
+/* general */
 :root {
     --green: #3dccc7;
     --red: #ef476f;
@@ -41,6 +42,7 @@ h1 span {
     color: var(--white);
 }
 
+/* timer */
 .border {
     border-radius: 50%;
     aspect-ratio: 1;
@@ -135,6 +137,32 @@ h1 span {
     color: var(--white);
 }
 
+.notification {
+    background-color: rgba(240, 248, 255, 0.805);
+    padding: 1em;
+    border-radius: 1rem;
+    position: fixed;
+    width: 90%;
+    max-width: 350px;
+    top: -50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 10;
+    display: flex;
+    background-color: var(--grey);
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.207);
+    color: var(--white);
+    font-family: 'Courier New', Courier, monospace;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.notification button {
+    align-self: center;
+}
+
+
+/* modal */
 .custom-timer-modal {
     background-color: var(--grey);
     padding: 1rem;
@@ -227,7 +255,6 @@ input[type=number] {
     border-radius: 2rem;
 }
 
-
 .hide {
     display: none;
 }
@@ -241,43 +268,7 @@ input[type=number] {
     position: fixed;
 }
 
-.notification {
-    background-color: rgba(240, 248, 255, 0.805);
-    padding: 1em;
-    border-radius: 1rem;
-    position: fixed;
-    width: 90%;
-    max-width: 350px;
-    top: -50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    opacity: 10;
-    display: flex;
-    background-color: var(--grey);
-    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.207);
-    color: var(--white);
-    font-family: 'Courier New', Courier, monospace;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.notification button {
-    align-self: center;
-}
-
-@keyframes notification {
-    to {
-        top: 15%; 
-        opacity: 1; 
-    }
-}
-
-@keyframes dismiss {
-    to {
-        top: -50%; 
-        opacity: 0;
-    }
-}
+/* footer */
 
 footer {
     text-align: right;
@@ -299,6 +290,24 @@ footer a {
 footer a:hover {
     color: var(--red); 
 }
+
+/* animations */
+
+@keyframes notification {
+    to {
+        top: 15%; 
+        opacity: 1; 
+    }
+}
+
+@keyframes dismiss {
+    to {
+        top: -50%; 
+        opacity: 0;
+    }
+}
+
+/* media queries */
 
 @media screen and (min-width: 500px) {
     h1 {

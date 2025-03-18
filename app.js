@@ -5,6 +5,9 @@ let deg = 0;
 let isTimeUp = false;
 let isTimerActive = false;
 
+let startTimestamp;
+let endTimestamp;
+
 let time = {
     min: 25,
     sec: 0
@@ -42,6 +45,7 @@ variables.settingBtns.forEach(btn => {
 
 // start timer
 function updateDeg() {
+    if (!isTimerActive) return;
     // update timer visualizer
     const degPerSecond = (360 / totalSeconds);
     deg += degPerSecond;
@@ -51,23 +55,32 @@ function updateDeg() {
 } 
 
 function updateTimer() {
-    if (time.min <= 0 && time.sec <= 0) {
+    if (!isTimerActive) return;
+
+    const now = Date.now();
+    const remainingTime = endTimestamp - now;
+
+    if (remainingTime <= 0) {
         stopTimer();
         return;
     }
 
-    if (time.sec > 0) {
-        time.sec--;
-    } else {
-        time.sec = 59;
-        time.min--;
-    }
+    const remainingSeconds = Math.floor(remainingTime / 1000);
+    const minutes = Math.floor(remainingSeconds / 60);
+    const seconds = remainingSeconds % 60;
+
+    time.min = minutes;
+    time.sec = seconds;
 
     displayTime();
 }
 
 function startTimer() {
     isTimerActive = true;
+    
+    startTimestamp = Date.now();
+    endTimestamp = startTimestamp + (time.min * 60 + time.sec) * 1000; 
+
     const interval = setInterval(() => {
         updateDeg();
         updateTimer();
@@ -114,10 +127,10 @@ variables.closeModalBtn.addEventListener('click', handleModal);
 variables.form.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    time = {
-        min: document.getElementById('min').value || 0,
-        sec: document.getElementById('sec').value || 0,
-    };
+    const min = document.getElementById('min').value || 0;
+    const sec = document.getElementById('sec').value || 0;
+
+    setTimer(min, sec);
 
     displayTime();
     setTotalSeconds();
@@ -140,6 +153,12 @@ function handleActive(btn, action) {
 }
 
 function setTimer(min, sec) {
+
+    if (sec >= 60) {
+        min = Math.floor(sec / 60);
+        sec = sec % 60;
+    }
+
     time = {
         min: min,
         sec: sec,
@@ -153,7 +172,7 @@ function reset() {
     deg = 0;
     variables.border.style.background = `conic-gradient(var(--red) ${deg}deg, transparent ${deg}deg)`;
     isTimeUp = false;
-    isTimerActive = true;
+    isTimerActive = false;
 
     document.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
 }

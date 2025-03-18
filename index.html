@@ -9,7 +9,9 @@
 </head>
 <body>
     <main>
-        <nav><h1>pomodoro<span>timer</span></h1></nav>
+        <nav>
+            <h1>pomodoro<span>timer</span></h1>
+        </nav>
         
         <div class="border" aria-hidden="true">
            <div class="timer">
@@ -35,11 +37,11 @@
             <form class="custom-timer-form">
                 <div class="inputs">
                     <label for="min">
-                        <input type="number" name="min" id="min" placeholder="minutes" aria-label="enter minutes">
+                        <input type="number" min="0" name="min" id="min" placeholder="minutes" aria-label="enter minutes">
                     </label>
     
                     <label for="sec">
-                        <input type="number" name="sec" id="sec" placeholder="seconds" aria-label="enter seconds">
+                        <input type="number" min="0" name="sec" id="sec" placeholder="seconds" aria-label="enter seconds">
                     </label>
                 </div>
             
