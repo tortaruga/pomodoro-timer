@@ -9,5 +9,3 @@ it educated me greatly. for example now i understand why people use react instea
 - pause/restart the timer;
 - works even if you are working on a different tab: even if the pomodoro timer page is out of focus the timer will keep going;
 - notification alarm: notification sound to alert you the time's up, without you having to check and even when the window's out of focus
-
-if there are bugs somewhere you're allowed to ridicule me, but also kindly tell me so i can try and fix them 

@@ -1,178 +1,145 @@
-import * as variables from './DOMvariables.js';
+const worker = new Worker("timerWorker.js");
 
-// initialize timer as default 
-let deg = 0;
-let isTimeUp = false;
+const settingBtns = document.querySelectorAll('.settings button');
+const border = document.querySelector('.border');
+
+let min;
+let sec; 
+
 let isTimerActive = false;
+let deg = 0;
 
-let startTimestamp;
-let endTimestamp;
 
-let time = {
-    min: 25,
-    sec: 0
-};
-
-let totalSeconds;
-
-displayTime();
-setTotalSeconds();
-
-// timer buttons
-variables.startBtn.addEventListener('click', startTimer);
-variables.pauseBtn.addEventListener('click', pauseTimer);
-
-// settings buttons
-variables.settingBtns.forEach(btn => {
+settingBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-        
-        reset();
-        variables.settingBtns.forEach(btn => btn.classList.remove('active'));
 
+        // remove selected button styles from previous selected button
+        // add it to currently selected button
+        document.querySelectorAll('.active').forEach(btn => handleActive(btn, 'remove'));
         handleActive(btn, 'add');
 
+        // set timer according to button chosen
         if (btn.id === 'task') {
-            setTimer(25, 0);
+            min = 25;
+            sec = 0;
         } else if (btn.id === 'short-break') {
-            setTimer(5, 0);
+            min = 5;
+            sec = 0;
         } else if (btn.id === 'long-break') {
-            setTimer(15, 0);
+            min = 15;
+            sec = 0
         } else if (btn.id === 'custom') {
             handleModal();
         }
+
+        worker.postMessage({command: 'set timer', min: min, sec: sec});
     })
 })
 
-// start timer
-function updateDeg() {
-    if (!isTimerActive) return;
-    // update timer visualizer
-    const degPerSecond = (360 / totalSeconds);
-    deg += degPerSecond;
-    variables.border.style.background = `conic-gradient(var(--red) ${deg}deg, transparent ${deg}deg)`;
-    // stop when timer reaches end
-    if (deg >= 360) stopTimer();
-} 
+worker.onmessage = function (e) {
+    if (e.data.command === 'timer set') {
+        min = e.data.min;
+        sec = e.data.sec;
+        // update visualizer
+        border.style.background = `conic-gradient(var(--red) ${e.data.deg}deg, transparent ${e.data.deg}deg)`;
+        displayTime();
+    } else if (e.data.command === 'timer running') {
+        isTimerActive = e.data.isTimerActive;
+        min = e.data.min;
+        sec = e.data.sec;
+        // update visualizer
+        border.style.background = `conic-gradient(var(--red) ${e.data.deg}deg, transparent ${e.data.deg}deg)`;
+        displayTime();
+    } else if (e.data.command === 'time is up') {
+        handleNotification();
+    } else if (e.data.command = 'timer stopped') {
+        isTimerActive = e.data.isTimerActive;
+        min = e.data.min;
+        sec = e.data.sec;
+        // update visualizer
+        border.style.background = `conic-gradient(var(--red) ${e.data.deg}deg, transparent ${e.data.deg}deg)`;
+        displayTime();
+    }
+}
 
-function updateTimer() {
-    if (!isTimerActive) return;
+function displayTime() {
+    const timeContainer = document.querySelector('.time'); 
+    timeContainer.innerHTML = `${min < 10 ? "0" + min : min}<span class=colon>:</span>${sec < 10 ? "0" + sec : sec}`;
+}
 
-    const now = Date.now();
-    const remainingTime = endTimestamp - now;
 
-    if (remainingTime <= 0) {
-        stopTimer();
-        return;
+// custom timer modal stuff
+function handleModal() {
+    const modal = document.querySelector('.custom-timer-modal');
+    const backdrop = document.querySelector('.backdrop');
+
+    modal.classList.toggle('hide');
+    backdrop.classList.toggle('hide');
+}
+
+const form = document.querySelector('.custom-timer-form');
+
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    let min = Number(document.getElementById('min').value) || 0; 
+    let sec = Number(document.getElementById('sec').value) || 0; 
+    
+    // handle seconds higher than 60
+    if (sec >= 60) {
+        min = min + Math.floor(sec / 60);
+        sec = sec % 60;
     }
 
-    const remainingSeconds = Math.floor(remainingTime / 1000);
-    const minutes = Math.floor(remainingSeconds / 60);
-    const seconds = remainingSeconds % 60;
+    worker.postMessage({command: 'set timer', min: min, sec: sec});
+    handleModal();
+})
 
-    time.min = minutes;
-    time.sec = seconds;
+const closeModalBtn = document.querySelector('.custom-timer-modal .close-btn');
+closeModalBtn.addEventListener('click', handleModal);
 
-    displayTime();
-}
-
-function startTimer() {
-    isTimerActive = true;
+// handle start timer
+const startBtn = document.querySelector('.start-btn');
+startBtn.addEventListener('click', () => {
+    if (!isTimerActive) {
+        worker.postMessage({command: 'start timer'});
+        // select right button
+        handleActive(pauseBtn, 'remove');
+        handleActive(startBtn, 'add');
+    }
     
-    startTimestamp = Date.now();
-    endTimestamp = startTimestamp + (time.min * 60 + time.sec) * 1000; 
+})
 
-    const interval = setInterval(() => {
-        updateDeg();
-        updateTimer();
+// handle notification when time's up
 
-        if (isTimerActive) {
-            handleActive(variables.startBtn, 'add');
-            handleActive(variables.pauseBtn, 'remove');
-        } else {
-            handleActive(variables.startBtn, 'remove');
-            handleActive(variables.pauseBtn, 'add');
-        }
-        if (isTimeUp || !isTimerActive) clearInterval(interval); 
-    }, 1000);
-}
-
-// pause / stop timer
-
-function stopTimer() {
-    isTimeUp = true;
-    variables.notification.style.animation = 'notification .5s forwards';
+function handleNotification() {
+    const notification = document.querySelector('.notification');
+    notification.style.animation = 'notification .5s forwards';
     // add sound alert
     const notificationSound = new Audio('./assets/alert.mp3');
     notificationSound.play();
 }
 
-function pauseTimer() {
-    isTimerActive = false;
-}
+const closeNotificationBtn = document.querySelector('.notification .close-btn');
 
-// notification
-variables.closeNotificationBtn.addEventListener('click', () => {
-    variables.notification.style.animation = 'dismiss .5s forwards'; 
-    reset();
+closeNotificationBtn.addEventListener('click', () => {
+    const notification = document.querySelector('.notification');
+    notification.style.animation = 'dismiss .5s forwards'; 
 })
 
-// custom timer settings
-function handleModal() {
-    variables.modal.classList.toggle('hide');
-    variables.backdrop.classList.toggle('hide');
-}
+// handle stop timer
 
-variables.closeModalBtn.addEventListener('click', handleModal);
+const pauseBtn = document.querySelector('.pause-btn'); 
 
-variables.form.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const min = document.getElementById('min').value || 0;
-    const sec = document.getElementById('sec').value || 0;
-
-    setTimer(min, sec);
-
-    displayTime();
-    setTotalSeconds();
-    handleModal();
-})
+pauseBtn.addEventListener('click', () => {
+    worker.postMessage({command: 'pause timer'});
+    // select right button
+    handleActive(pauseBtn, 'add');
+    handleActive(startBtn, 'remove');
+}) 
 
 
-
-// utility functions
-function displayTime() {
-    variables.timeContainer.innerHTML = `${time.min >= 10 ? time.min : '0' + time.min}<span class=colon>:</span>${time.sec >= 10 ? time.sec : '0' + time.sec}`
-}
-
-function setTotalSeconds() {
-    totalSeconds = (time.min * 60) + (time.sec);
-}
-
+// handle visual feedback for selected buttons
 function handleActive(btn, action) {
     action === 'add' ? btn.classList.add('active') : btn.classList.remove('active');
-}
-
-function setTimer(min, sec) {
-
-    if (sec >= 60) {
-        min = Math.floor(sec / 60);
-        sec = sec % 60;
-    }
-
-    time = {
-        min: min,
-        sec: sec,
-    }
-
-    displayTime();
-    setTotalSeconds();
-}
-
-function reset() {
-    deg = 0;
-    variables.border.style.background = `conic-gradient(var(--red) ${deg}deg, transparent ${deg}deg)`;
-    isTimeUp = false;
-    isTimerActive = false;
-
-    document.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
 }
