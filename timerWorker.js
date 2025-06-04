@@ -67,9 +67,4 @@ function updateDeg() {
     // update timer visualizer
     const degPerSecond = (360 / totalSeconds);
     deg += degPerSecond;
-    // stop when timer reaches end
-    // if (deg >= 360) stopTimer();
 } 
-
-// determine total seconds....
-// handle seconds conversion in custom timer
