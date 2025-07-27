@@ -50,8 +50,10 @@ worker.onmessage = function (e) {
         // update visualizer
         border.style.background = `conic-gradient(var(--red) ${e.data.deg}deg, transparent ${e.data.deg}deg)`;
         displayTime();
+        document.querySelector('.colon').classList.add('active');
     } else if (e.data.command === 'time is up') {
         handleNotification();
+        document.querySelector('.colon').classList.remove('active');
     } else if (e.data.command = 'timer stopped') {
         isTimerActive = e.data.isTimerActive;
         min = e.data.min;
@@ -59,12 +61,13 @@ worker.onmessage = function (e) {
         // update visualizer
         border.style.background = `conic-gradient(var(--red) ${e.data.deg}deg, transparent ${e.data.deg}deg)`;
         displayTime();
+        document.querySelector('.colon').classList.remove('active');
     }
 }
 
 function displayTime() {
     const timeContainer = document.querySelector('.time'); 
-    timeContainer.innerHTML = `${min < 10 ? "0" + min : min}<span class=colon>:</span>${sec < 10 ? "0" + sec : sec}`;
+    timeContainer.innerHTML = `${min < 10 ? "0" + min : min}<span class='colon'>:</span>${sec < 10 ? "0" + sec : sec}`;
 }
 
 

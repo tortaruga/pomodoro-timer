@@ -14,12 +14,8 @@ self.onmessage = function (e) {
         time.min = e.data.min;
         time.sec = e.data.sec; 
         deg = 0;
-        totalSeconds = (time.min * time.sec) + time.sec;
-        console.log(time.min);
-        console.log(time.sec);
-        console.log(totalSeconds);
+        totalSeconds = (time.min * 60) + time.sec;
         stopTimer();
-        
         postMessage({command: 'timer set', min: time.min, sec: time.sec, deg: deg})
     } else if (e.data.command === 'start timer') {
         isTimerActive = true;

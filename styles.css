@@ -291,6 +291,10 @@ footer a:hover {
     color: var(--red); 
 }
 
+.colon.active {
+    animation: flicker 1s linear infinite; 
+}
+
 /* animations */
 
 @keyframes notification {
@@ -303,6 +307,16 @@ footer a:hover {
 @keyframes dismiss {
     to {
         top: -50%; 
+        opacity: 0;
+    }
+}
+
+@keyframes flicker {
+    0%, 100% {
+        opacity: 1;
+    }
+
+    50% {
         opacity: 0;
     }
 }
